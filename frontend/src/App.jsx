@@ -1,180 +1,145 @@
-import React, { useEffect, useState } from "react";
-import abi from "./utils/waveportal.json"
+import React, { useState, useEffect } from "react";
+import abi from "./utils/supplychain.json";
 import "./App.css";
+import Navbar from "./components/Navbar";
+import Body from "./components/Body";
 import * as buffer from "buffer";
 window.Buffer = buffer.Buffer;
 
-import {ethers} from "ethers";
+import { ethers } from "ethers";
 
 const getEthereumObject = () => window.ethereum;
-//const contractAddress = "0x835E3193f16ff2838668BcEd2B18EBDEdFe9eb01";
-const contractAddress = "0x469B4b11F4ad86714E04a6fAb424977fEd2af5F4";
+const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const contractABI = abi.abi;
 
-const findMetaMaskWallet = async () => {
-  try{
-    const ethereum = getEthereumObject();
-
-    if(!ethereum)
-    {
-      console.log("Metamask not installed");
-      return null;
-    }
-
-    const accounts = await ethereum.request({method: "eth_accounts"});
-
-    if(accounts.length !== 0)
-    {
-      const account = accounts[0];
-      console.log("Found authorized account " + account);
-      return account
-    }
-    else
-    {
-      console.log("No authorized account found");
-      return null;
-    }
-  }
-  catch(error){
-    console.error(error);
-    return null;
-  }
-}
-
 const App = () => {
-  const [currentAccount, setCurrentAccount] = useState("");
-  const [allWaves, setAllWaves] = useState([]);
-  const [message,setMessage] = useState("");
+  const [message, setMessage] = useState("Loading...");
+  const [account, setAccount] = useState("");
+  const [status, setStatus] = useState(false);
+  const [contract, setContract] = useState({})
 
-  const connectWallet = async () => {
+  const findAuthorizedWallet = async () => {
     try {
       const ethereum = getEthereumObject();
-      if (!ethereum) {
-        alert("Get MetaMask!");
-        return;
+
+      if (ethereum == null) {
+        setMessage("Install Metamask");
+        console.log("No Metamask Found");
+        return null;
       }
 
-      const accounts = await ethereum.request({method:"eth_requestAccounts"});
-      
-      console.log("Account set to: ", accounts[0]);
-      setCurrentAccount(accounts[0]);
-      getAllWaves();
+      const accounts = await ethereum.request({ method: "eth_accounts" });
+
+      if (accounts.length == 0) {
+        setMessage("No Authorized Account");
+        console.log("No Authorized Account");
+        return null;
+      } else {
+        setMessage("" + accounts[0]);
+        setAccount(accounts[0]);
+        GetContract();
+        console.log("Account connected to: " + accounts[0]);
+        accounts[0];
+      }
     } catch (error) {
-      console.error(error);
+      console.log(error);
+      return null;
     }
   };
 
-  const wave = async () => {
-    try{
-      const {ethereum} = window;
-
-      if(ethereum){
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      const wavePortalContract = new ethers.Contract(contractAddress,contractABI, signer);
-
-      let count = await wavePortalContract.getTotalWaves();
-      console.log("Total number of waves: " + count.toNumber());
-
-      const waveTxn = await wavePortalContract.wave(message, { gasLimit: 300000 });
-      console.log("Mining: " + waveTxn.hash);
-
-      await waveTxn.wait();
-      console.log("Mined- " + waveTxn.hash);
-
-      count = await wavePortalContract.getTotalWaves();
-      console.log("Total number of waves: " + count.toNumber());
-      }
-    }
-    catch(error){
-      console.log(error);
-    }
-  }
-
-  const onNewWave = (from, timestamp, message) => {
-    setAllWaves(prevState => [...prevState, {
-      address: from,
-      timestamp: new Date(timestamp * 1000),
-      message: message
-    }]);
-  }
-
-  const getAllWaves = async () => {
+  const ConnectWallet = async () => {
     try {
-      const { ethereum } = window;
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
-        wavePortalContract.on("NewWave", onNewWave);
+      const ethereum = getEthereumObject();
 
-        const waves = await wavePortalContract.getAllWaves();
+      if (ethereum == null) {
+        setMessage("Install Metamask");
+        console.log("No Metamask Found");
+        return null;
+      }
 
-        let wavesCleaned = [];
-        waves.forEach(wave => {
-          wavesCleaned.push({
-            address: wave.waver,
-            timestamp: new Date(wave.timestamp * 1000),
-            message: wave.message
-          });
-        });
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
 
-        setAllWaves(wavesCleaned);
+      if (accounts.length == 0) {
+        setMessage("No Authorized Account");
+        console.log("No Authorized Account");
+        return null;
       } else {
-        console.log("Ethereum object doesn't exist!")
+        setMessage("" + accounts[0]);
+        setAccount(accounts[0]);
+        GetContract();
+        console.log("Account connected to: " + accounts[0]);
+        accounts[0];
       }
     } catch (error) {
       console.log(error);
+      return null;
+    }
+  };
+
+  const GetMessage = async () => {
+    try {
+        //const ethereum = getEthereumObject();
+        const {ethereum} = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const supplyChainContract = new ethers.Contract(
+          contractAddress,
+          contractABI,
+          signer
+        );
+
+        let count = await supplyChainContract.GetCount();
+        console.log(count.toNumber());
+
+        /*supplyChainContract.on("OnGet", (_message) => {
+          setMessage(_message);
+        });*/
+      } else setMessage("Ethereum Not Found");
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const GetContract = async() => {
+    try {
+      const ethereum = getEthereumObject();
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const supplyChainContract = new ethers.Contract(
+          contractAddress,
+          contractABI,
+          signer
+        );
+        setContract(supplyChainContract);
+    } else setMessage("Ethereum Not Found");
+    } catch (error) {
+      console.log(error);
+      return null;
     }
   }
 
   useEffect(() => {
     async function getAccount() {
-    const account = await findMetaMaskWallet();
-    if(account !== null)
-    {
-      setCurrentAccount(account);
-      getAllWaves();
-    }}
-    getAccount();
-  },[]);
+      const acc = findAuthorizedWallet();
+      if (acc != null) {
+      }
+    }
 
-  function SetMessage(event)
-  {
-    setMessage(event.target.value);
-  }
+    getAccount();
+  }, []);
 
   return (
-    <div className="mainContainer">
-      <div className="dataContainer">
-        <div className="header">
-          👋 Hey there!
-        </div>
-
-        <div className="bio">
-          I am farza and I worked on self-driving cars so that's pretty cool right? Connect your Ethereum wallet and wave at me!
-        </div>
-
-        <button className="waveButton" onClick={wave}>
-          Wave at Me
-        </button>
-        <input type="text" placeholder="Message..." value={message} onChange={SetMessage} className="login-box" />
-
-        {!currentAccount && (
-          <button className="waveButton" onClick={connectWallet}>
-            Connect Wallet
-          </button>
-        )}
-
-        {allWaves.map((wave, index) => {
-          return (
-            <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
-              <div>Address: {wave.address}</div>
-              <div>Time: {wave.timestamp.toString()}</div>
-              <div>Message: {wave.message}</div>
-            </div>)
-        })}
-      </div>
+    <div>
+      <Navbar />
+      <Body msg={message} connect={ConnectWallet} getMessage={GetMessage} contract={contract}/>
+      {status ? <h1>hello</h1> : null}
     </div>
   );
 };

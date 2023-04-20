@@ -40,3 +40,33 @@
   margin-top: 2vh;
   margin-bottom: 4vh;
 }
+
+/*Bootstrap Classes*/
+
+
+
+/*Custom Classes*/
+
+.button-row{
+  margin: 2vh 0;
+}
+
+.main-body{
+  padding: 5vh 5vw;
+}
+
+.main-text{
+  text-align: center;
+  font-family: "Montserrat"
+}
+
+.text-mono{
+  text-align: center;
+  font-family: "Space Mono";
+  font-size: 1rem;
+}
+
+.text-poppins{
+  color: white;
+  font-family: "Poppins"
+}
