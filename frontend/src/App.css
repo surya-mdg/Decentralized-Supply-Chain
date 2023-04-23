@@ -24,13 +24,12 @@
   margin-top: 16px;
 }
 
-.waveButton {
+.round-button {
   cursor: pointer;
-  margin-top: 16px;
-  padding: 8px;
+  padding: 1vh;
+  width: 6vw;
   border: 0;
   border-radius: 5px;
-  
 }
 
 .login-box{
@@ -43,16 +42,62 @@
 
 /*Bootstrap Classes*/
 
-
+.btn-outline-dark{
+  border: 2px solid black;
+}
 
 /*Custom Classes*/
+
+.body{
+  background-color: rgb(235, 254, 255);
+}
 
 .button-row{
   margin: 2vh 0;
 }
 
+.control-pad{
+  /*padding: 5vh 5vw;*/
+  height: 45vh;
+  padding-left: 2vw;
+}
+
+.control-pad-item{
+  height: 100%;
+  margin-right: 2vw;
+  border: 2px solid black;
+  border-radius: 5px;
+  padding-top: 2vh;
+  padding: 2vh 2vw;
+  background-color: azure;
+}
+
+.status-bar-item{
+  height: 100%;
+  margin-right: 2vw;
+  border: 2px solid black;
+  border-radius: 5px;
+  background-color: azure;
+}
+
+.status-bar-section{
+  border-bottom: 2px solid black;
+  height: 8vh;
+}
+
+.control-pad-section{
+  margin: 3vh 0;
+  padding: 0;
+  height: 10vh;
+}
+
+.control-pad-row{
+  height: 100%;
+}
+
 .main-body{
-  padding: 5vh 5vw;
+  padding: 15vh 5vw;
+  height: 40vh;
 }
 
 .main-text{
@@ -69,4 +114,26 @@
 .text-poppins{
   color: white;
   font-family: "Poppins"
+}
+
+.image{
+  position: relative;
+  top: 1vh;
+  right: 1vw;
+  width: 25px;
+}
+
+.input-box{
+  border: 2px solid black;
+  border-radius: 5px;
+  height: 22vh;
+  margin-top: 2vh;
+  margin-bottom: 3vh;
+}
+
+.abs-image{
+  position: absolute;
+  top: 26vh;
+  right: 24.5vh;
+  width: 25px;
 }

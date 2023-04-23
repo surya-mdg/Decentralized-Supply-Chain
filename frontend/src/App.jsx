@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import abi from "./utils/supplychain.json";
 import "./App.css";
 import Navbar from "./components/Navbar";
-import Body from "./components/Body";
+import Bar from "./components/Bar";
+import ControlPad from "./components/ControlPad";
 import * as buffer from "buffer";
 window.Buffer = buffer.Buffer;
 
@@ -13,10 +14,12 @@ const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const contractABI = abi.abi;
 
 const App = () => {
-  const [message, setMessage] = useState("Loading...");
+  const [message, setMessage] = useState("");
   const [account, setAccount] = useState("");
   const [status, setStatus] = useState(false);
-  const [contract, setContract] = useState({})
+  const [contract, setContract] = useState({});
+  const [updated, setUpdated] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const findAuthorizedWallet = async () => {
     try {
@@ -31,13 +34,14 @@ const App = () => {
       const accounts = await ethereum.request({ method: "eth_accounts" });
 
       if (accounts.length == 0) {
-        setMessage("No Authorized Account");
+        setMessage("Connect");
         console.log("No Authorized Account");
         return null;
       } else {
         setMessage("" + accounts[0]);
         setAccount(accounts[0]);
         GetContract();
+        GetMessage();
         console.log("Account connected to: " + accounts[0]);
         accounts[0];
       }
@@ -92,13 +96,10 @@ const App = () => {
           signer
         );
 
-        let count = await supplyChainContract.GetCount();
-        console.log(count.toNumber());
-
-        /*supplyChainContract.on("OnGet", (_message) => {
-          setMessage(_message);
-        });*/
-      } else setMessage("Ethereum Not Found");
+        supplyChainContract.on("ChainUpdated", () => {
+          setUpdated(true);
+        });
+      } 
     } catch (error) {
       console.log(error);
       return null;
@@ -131,15 +132,28 @@ const App = () => {
       if (acc != null) {
       }
     }
-
     getAccount();
   }, []);
 
+  const IncreaseProgress = () => {
+    switch(progress)
+    {
+      case 0:
+        setProgress(51);
+        break;
+      case 51:
+        setProgress(100);
+        break;
+      default:
+        break;
+    }
+  }
+
   return (
-    <div>
-      <Navbar />
-      <Body msg={message} connect={ConnectWallet} getMessage={GetMessage} contract={contract}/>
-      {status ? <h1>hello</h1> : null}
+    <div className="body">
+      <Navbar msg={message} connect={ConnectWallet}/>
+      <Bar progress={progress}/>
+      <ControlPad getMessage={GetMessage} contract1={contract} address={contractAddress} abi={contractABI} increase={IncreaseProgress}/>
     </div>
   );
 };
