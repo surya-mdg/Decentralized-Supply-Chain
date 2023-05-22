@@ -6,6 +6,7 @@ import "../node_modules/hardhat/console.sol";
 
 contract SupplyChain 
 {
+    uint256 public userCount;
     uint256 public prodCount;
     uint256 prodIndexOffset = 1000000000;
     string password = "$2a$12$REJHy2aPASYWEXUdVwjpZu5xbR2OTludsvq4iYoPap/k1UUbo5Sjy";
@@ -16,6 +17,7 @@ contract SupplyChain
     mapping(uint256 => bool) prodExist; //Used to check if product code exists or not
     mapping(address => User) users; //Maps the address of a user with their information
     mapping(uint256 => Node[]) public supplyChain; //Stores the supply chain for each product created
+    mapping(uint256 => Funds) public funds; //Stores the funds donated for each product created
 
     event ChainUpdated();
 
@@ -27,10 +29,25 @@ contract SupplyChain
 
     struct User //Used to store user information
     {
+        uint256 id;
         string userType;
         string name;
+        string email;
+        string phone;
         string location;
-        string userDesc;
+    }
+
+    struct Donator
+    {
+        address donatorAddress;
+        uint256 amount;
+    }
+
+    struct Funds
+    {
+        uint256 donations;
+        uint256 donationCount;
+        Donator[] donators;
     }
 
     struct Node //Used to form the supply chain
@@ -53,6 +70,18 @@ contract SupplyChain
         prodIndex[prodCode] = _id;
         prodExist[prodCode] = true;
         prodCount++;
+    }
+
+    function Donate(uint256 _id) public payable { //Donates funds to the respective user ID
+        funds[_id].donations += msg.value;
+        funds[_id].donationCount++;
+        Donator memory donator = Donator(msg.sender, msg.value);
+        funds[_id].donators.push(donator);      
+    }
+
+    function GetDonations(uint256 _id) external view returns(Funds memory) //Gets the total amount of donations for the respective product code
+    {
+        return funds[_id];
     }
     
     function GetProductCode(uint256 _id) external view returns(uint256) //Gets the product code of the most recently created product
@@ -78,7 +107,7 @@ contract SupplyChain
             return false;
     }
 
-    function SetTracker(string memory _location) external
+    function SetTracker(string memory _location) external //Sets the current location
     {
         location = _location;
     }
@@ -93,9 +122,12 @@ contract SupplyChain
         emit ChainUpdated();
     }
 
-    function UpdateUser(string memory _userType, string memory _name, string memory _location, string memory _userDesc) external //Update information of the user
+    function UpdateUser(string memory _userType, string memory _name, string memory _email, string memory _phone, string memory _location) external //Update information of the user
     {
-        User memory user = User(_userType, _name, _location, _userDesc);
+        if(keccak256(abi.encodePacked(users[msg.sender].name)) == keccak256(abi.encodePacked("")))
+            userCount++;
+
+        User memory user = User(userCount - 1, _userType, _name, _email, _phone, _location);
         users[msg.sender] = user;
     }
 }

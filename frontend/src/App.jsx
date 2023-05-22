@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import abi from "./utils/supplychain.json";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import Bar from "./components/Bar";
 import ControlPad from "./components/ControlPad";
-import * as buffer from "buffer";
-window.Buffer = buffer.Buffer;
 
 import { ethers } from "ethers";
+import abi from "./utils/supplychain.json";
+import * as buffer from "buffer";
+window.Buffer = buffer.Buffer;
 
 const getEthereumObject = () => window.ethereum;
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -16,12 +16,11 @@ const contractABI = abi.abi;
 const App = () => {
   const [message, setMessage] = useState("");
   const [account, setAccount] = useState("");
-  const [status, setStatus] = useState(false);
   const [contract, setContract] = useState({});
   const [updated, setUpdated] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const findAuthorizedWallet = async () => {
+  const findAuthorizedWallet = async () => { //Searches for authroized account in Metamask
     try {
       const ethereum = getEthereumObject();
 
@@ -51,7 +50,7 @@ const App = () => {
     }
   };
 
-  const ConnectWallet = async () => {
+  const ConnectWallet = async () => { //Requests authorization from Metamask to connect account
     try {
       const ethereum = getEthereumObject();
 
@@ -106,7 +105,7 @@ const App = () => {
     }
   };
 
-  const GetContract = async() => {
+  const GetContract = async() => { //Retrieves contract from the blockchain
     try {
       const ethereum = getEthereumObject();
 
@@ -135,13 +134,18 @@ const App = () => {
     getAccount();
   }, []);
 
-  const IncreaseProgress = () => {
-    switch(progress)
+  const IncreaseProgress = (reset, stage) => { //Updates the progress bar when called
+    if(reset)
+    {
+      setProgress(0);
+      return;
+    }
+    switch(stage)
     {
       case 0:
         setProgress(51);
         break;
-      case 51:
+      case 1:
         setProgress(100);
         break;
       default:
