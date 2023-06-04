@@ -10,9 +10,10 @@ contract SupplyChain
     uint256 public prodCount;
     uint256 prodIndexOffset = 1000000000;
     string password = "$2a$12$REJHy2aPASYWEXUdVwjpZu5xbR2OTludsvq4iYoPap/k1UUbo5Sjy";
-    string location = "Florida #27";
+    string location = "Mysore - 570020";
 
-    mapping(uint256 => Product) prodId; //Maps names of products with a unique id
+    string[] prodId = ["Peanut Butter", "Mixed Fruit Jam"]; //Maps names of products with a unique id
+    mapping(uint256 => string) prodName; //Maps the product code with the respective product name
     mapping(uint256 => uint256) prodIndex; //Maps the product code with the respective product information
     mapping(uint256 => bool) prodExist; //Used to check if product code exists or not
     mapping(address => User) users; //Maps the address of a user with their information
@@ -20,12 +21,6 @@ contract SupplyChain
     mapping(uint256 => Funds) public funds; //Stores the funds donated for each product created
 
     event ChainUpdated();
-
-    constructor()
-    {
-        prodId[0] = Product("Peanut Butter", "Food paste or spread made from ground, dry-roasted peanuts.");
-        prodId[1] = Product("Mixed Fruit Jam", "Made from a mixture of fruits are usually called conserves, especially when they include citrus fruits, nuts, raisins, or coconut.");
-    }
 
     struct User //Used to store user information
     {
@@ -35,6 +30,7 @@ contract SupplyChain
         string email;
         string phone;
         string location;
+        string fileLink;
     }
 
     struct Donator
@@ -56,6 +52,7 @@ contract SupplyChain
         string prodName;
         string processDesc;
         address nodeAddress;
+        uint256 timestamp;
     }
 
     struct Product //Product's supply chain information is stored here
@@ -69,6 +66,7 @@ contract SupplyChain
         uint256 prodCode = (_id * prodIndexOffset) + prodCount;
         prodIndex[prodCode] = _id;
         prodExist[prodCode] = true;
+        prodName[prodCode] = prodId[_id];
         prodCount++;
     }
 
@@ -112,22 +110,22 @@ contract SupplyChain
         location = _location;
     }
 
-    function UpdateSupplyChain(uint256 _prodCode, string memory _prodName, string memory _prodDesc) external //Adds a node to the supply chain for the respective product code
+    function UpdateSupplyChain(uint256 _prodCode, string memory _prodDesc) external //Adds a node to the supply chain for the respective product code
     {
         require(prodExist[_prodCode], "Invalid Product Code");
         require(keccak256(abi.encodePacked(users[msg.sender].location)) == keccak256(abi.encodePacked(location)), "Not at Location");
 
-        supplyChain[_prodCode].push(Node(users[msg.sender], _prodName, _prodDesc, msg.sender));
+        supplyChain[_prodCode].push(Node(users[msg.sender], prodName[_prodCode], _prodDesc, msg.sender, block.timestamp));
 
         emit ChainUpdated();
     }
 
-    function UpdateUser(string memory _userType, string memory _name, string memory _email, string memory _phone, string memory _location) external //Update information of the user
+    function UpdateUser(string memory _userType, string memory _name, string memory _email, string memory _phone, string memory _location, string memory _fileLink) external //Update information of the user
     {
         if(keccak256(abi.encodePacked(users[msg.sender].name)) == keccak256(abi.encodePacked("")))
             userCount++;
 
-        User memory user = User(userCount - 1, _userType, _name, _email, _phone, _location);
+        User memory user = User(userCount - 1, _userType, _name, _email, _phone, _location, _fileLink);
         users[msg.sender] = user;
     }
 }

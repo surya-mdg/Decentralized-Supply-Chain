@@ -77,7 +77,9 @@ const ControlPad = (props) => {
         const info = await supplyChainContract.GetSupplyChain(code);
         const index1 = info.length - 1;
         props.increase(false, index1);
-        const chainInfo = {type: info[index1][0][0], owner: info[index1][0][1], location: info[index1][0][2], desc: info[index1][0][3], prodName: info[index1][1], processDesc: info[index1][2], nodeAdd: info[index1][3]};
+        const bigNum = BigInt(info[index1][4]);
+        const timestamp = new Date(Number(bigNum) * 1000);
+        const chainInfo = {type: info[index1][0][1], owner: info[index1][0][2], location: info[index1][0][3], desc: info[index1][0][4], prodName: info[index1][1], processDesc: (info[index1][2].substring(0, 24) + "..."), nodeAdd: info[index1][3], timestamp: timestamp.toLocaleString()};
         setStatus(chainInfo);
     }
 
@@ -109,7 +111,7 @@ const ControlPad = (props) => {
                         <div className="col-md-4 main-text" style={{marginRight: "1vw", padding: "1vh", marginLeft: "2.5vw"}}>
                             <button type="button" className="btn btn-dark round-button" onClick={() => CreateProduct()}>Create</button>
                         </div>
-                        <div className="col-md-3 main-text" style={{marginRight: "1vw", padding: "1vh", marginTop: "22vh"}}>
+                        {/*<div className="col-md-3 main-text" style={{marginRight: "1vw", padding: "1vh", marginTop: "22vh"}}>
                             <button type="button" className="btn btn-outline-dark round-button" onClick={() => IncreaseProgress()}>Update</button>
                         </div>
                         <div className="col-md-3 main-text" style={{marginRight: "1vw", padding: "1vh", marginTop: "22vh"}}>
@@ -117,6 +119,9 @@ const ControlPad = (props) => {
                         </div>
                         <div className="col-md-3 main-text" style={{marginRight: "1vw", padding: "1vh", marginTop: "22vh"}}>
                             <button type="button" className="btn btn-outline-dark round-button" onClick={() => UpdateChain()}>Add</button>
+                        </div>*/}
+                        <div className="row align-items-center justify-content-center prod-id text-mono" style={{height: "7vh", marginTop: "25vh"}}>
+                            <h4 style={{fontSize: "1.5rem", paddingTop: "2vh"}}>ID -  {prodID}</h4>
                         </div>
                     </div>
                 </div>
@@ -131,18 +136,19 @@ const ControlPad = (props) => {
                     <div className="row align-items-center justify-content-center status-bar-section">
                         <h4 style={{fontSize: "1.5rem", paddingTop: "2vh"}}>Status</h4>
                     </div>
-                    <div className="row status-bar-section" style={{height: "30vh"}}>
-                        <h6 align="left" >Type - {status.type}</h6>
+                    <div className="row status-bar-section" style={{height: "37vh", border: "none"}}>
+                        <h6 align="left">Type - {status.type}</h6>
                         <h6 align="left">Owner - {status.owner}</h6>
                         <h6 align="left">Location - {status.location}</h6>
                         <h6 align="left">Description - {status.desc}</h6>
                         <h6 align="left">Product Name - {status.prodName}</h6>
                         <h6 align="left">Process Description - {status.processDesc}</h6>
+                        <h6 align="left">Time - {status.timestamp}</h6>
                         <h6 align="left">Node Address - {status.nodeAdd}</h6>
                     </div>
-                    <div className="row align-items-center justify-content-center status-bar-section text-mono" style={{height: "7vh", border: "0px"}}>
+                    {/*<div className="row align-items-center justify-content-center status-bar-section text-mono" style={{height: "7vh", border: "0px"}}>
                         <h4 style={{fontSize: "1.5rem", paddingTop: "2vh"}}>ID -  {prodID}</h4>
-                    </div>
+                    </div>*/}
                 </div>
             </div>
         </div>

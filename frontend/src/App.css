@@ -42,14 +42,25 @@
 
 /*Bootstrap Classes*/
 
+.navbar{
+  background-color: #1c2837;
+}
+
 .btn-outline-dark{
   border: 2px solid black;
 }
 
 /*Custom Classes*/
 
+.abs-image{
+  position: absolute;
+  top: 26vh;
+  right: 24.5vh;
+  width: 25px;
+}
+
 .body{
-  background-color: rgb(235, 254, 255);
+  background-color: #27374D;
 }
 
 .button-row{
@@ -69,7 +80,10 @@
   border-radius: 5px;
   padding-top: 2vh;
   padding: 2vh 2vw;
-  background-color: azure;
+  background-color: #526D82;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 
+              0 5px 2px rgba(0, 0, 0, 0.15), 
+              0 5px 3px rgba(0, 0, 0, 0.1);
 }
 
 .status-bar-item{
@@ -77,12 +91,28 @@
   margin-right: 2vw;
   border: 2px solid black;
   border-radius: 5px;
-  background-color: azure;
+  background-color: #526D82;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 
+              0 5px 2px rgba(0, 0, 0, 0.15), 
+              0 5px 3px rgba(0, 0, 0, 0.1);
 }
 
 .status-bar-section{
   border-bottom: 2px solid black;
   height: 8vh;
+  margin-bottom: 0.25rem;
+}
+
+.connect-text{
+  text-align: center;
+  font-family: "Montserrat";
+  color: #DDE6ED;
+}
+
+.connect-text:hover{
+  text-align: center;
+  font-family: "Montserrat";
+  color: #27374D;
 }
 
 .control-pad-section{
@@ -102,7 +132,8 @@
 
 .main-text{
   text-align: center;
-  font-family: "Montserrat"
+  font-family: "Montserrat";
+  color: #000000;
 }
 
 .text-mono{
@@ -131,9 +162,8 @@
   margin-bottom: 3vh;
 }
 
-.abs-image{
-  position: absolute;
-  top: 26vh;
-  right: 24.5vh;
-  width: 25px;
+.prod-id{
+  border-top: 2px solid black;
+  height: 7vh;
+  margin-top: 25vh;
 }

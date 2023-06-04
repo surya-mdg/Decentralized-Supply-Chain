@@ -156,7 +156,7 @@ const App = () => {
   return (
     <div className="body">
       <Navbar msg={message} connect={ConnectWallet}/>
-      <Bar progress={progress}/>
+      <Bar progress={progress} className="bar"/>
       <ControlPad getMessage={GetMessage} contract1={contract} address={contractAddress} abi={contractABI} increase={IncreaseProgress}/>
     </div>
   );

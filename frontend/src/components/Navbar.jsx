@@ -2,9 +2,9 @@ import React from "react";
 
 const Navbar = (props) => {
   return (
-    <nav className="navbar navbar-expand-lg bg-dark">
+    <nav className="navbar navbar-expand-lg">
       <div className="container-fluid">
-        <a className="navbar-brand text-poppins" href="#">
+        <a className="navbar-brand text-poppins" href="#" style={{color: "#DDE6ED"}}>
           D-Chain
         </a>
         <button
@@ -21,7 +21,7 @@ const Navbar = (props) => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <button type="button" className="btn btn-outline-light main-text" onClick={() => props.connect()}>{(props.msg == "") ? "Connect" : props.msg}</button>
+              <button type="button" className="btn btn-outline-light connect-text" onClick={() => props.connect()}>{(props.msg == "") ? "Connect" : props.msg}</button>
             </li>
           </ul>
         </div>

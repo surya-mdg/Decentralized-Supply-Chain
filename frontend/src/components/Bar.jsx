@@ -3,6 +3,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 
 const Bar = (props) => {
     const [progress, setProgress] = useState(51);
+    const imgURL = "src\images\BlackArrow.png";
 
     const IncreaseProgress = () => {
         const intervalId = setInterval(() => {
